@@ -1,0 +1,60 @@
+select * from flights f ;
+select * from airports_data ad ;
+
+select * from flights_v fv;
+select * from flights f
+
+--  cuales son los 3 aeropuertos con más vuelos
+select ad.airport_name, f.departure_airport, count(ad.airport_name) 
+from flights f 
+join airports_data ad on ad.airport_code = f.departure_airport
+group by f.departure_airport, ad.airport_name
+order by 3 desc
+limit 3;
+
+-- cual es el aeropuerto con menos vuelos
+select ad.airport_name, f.departure_airport, count(ad.airport_name) as all_flights 
+from flights f 
+join airports_data ad on ad.airport_code = f.departure_airport
+group by f.departure_airport, ad.airport_name
+order by 3 asc 
+limit 1;
+
+
+--- consulta desde la vista flights f
+--cual es el aeropuerto con menos vuelos
+select fv.departure_airport_name as name_airport , count(fv.departure_airport_name) as all_flights
+from flights_v fv
+group by fv.departure_airport_name
+order by 2
+limit 1;
+
+--  cuales son los 3 aeropuertos con más vuelos
+select fv.departure_airport_name as name_airport , count(fv.departure_airport_name) as all_flights
+from flights_v fv
+group by fv.departure_airport_name
+order by 2 desc
+limit 3;
+
+--- mostrar el estado de los vuelos por aeropuerto 
+select ad.airport_name, f.status, f.departure_airport, count(ad.airport_name) 
+from flights f 
+join airports_data ad on ad.airport_code = f.departure_airport
+where f.status in ('Scheduled', 'Arrived', 'Cancelled', 'Delayed', 'On Time', 'Departed')
+group by f.status, ad.airport_name, f.departure_airport
+order by 1 desc;
+
+-- cantidad de vuelos que cancelados por aeropuertos 
+select fv.status, fv.departure_airport_name, count(fv.status) as amount_flights
+from flights_v fv 
+where fv.status = 'Cancelled'
+group by  fv.status, fv.departure_airport_name
+order by 3 desc;
+
+
+-- - mostrar el promedio de valor del ticket por avion 
+select f.flight_no, count(tf.amount)as number_tickets, sum(tf.amount)as Total, round(avg(tf.amount),2)  as Promedio
+from flights f 
+join ticket_flights tf on tf.flight_id = f.flight_id 
+group by f.flight_no
+order by 1;
